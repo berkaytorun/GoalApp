@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Button, StyleSheet, TextInput, View, FlatList } from 'react-native';
+import { Button, StyleSheet, View, FlatList } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import GoalInput from './components/GoalInput';
 import GoalItem from './components/GoalItem';
 export default function App() {
     const [goals, setGoals] = useState([]);
+    const [isVisible, setIsVisible] = useState(false);
 
     const addGoalHandler = (enteredGoalText) => {
         if (enteredGoalText !== '')
@@ -15,25 +17,38 @@ export default function App() {
     };
 
     return (
-        <View style={styles.appContainer}>
-            <GoalInput onAddGoal={addGoalHandler} />
-            <View style={styles.goalsContainer}>
-                <FlatList
-                    data={goals}
-                    keyExtractor={(item, index) => item.key}
-                    renderItem={(itemData) => {
-                        return (
-                            <GoalItem
-                                deleteItem={deleteItems}
-                                index={itemData.index}
-                                text={itemData.item.text}
-                                itemKey={itemData.item.key}
-                            />
-                        );
-                    }}
+        <>
+            <StatusBar style='auto' />
+            <View style={styles.appContainer}>
+                <Button
+                    title='Add Goal'
+                    color='ivory'
+                    onPress={() => setIsVisible(true)}
                 />
+                {isVisible && (
+                    <GoalInput
+                        onAddGoal={addGoalHandler}
+                        isVisible={isVisible}
+                        setIsVisible={setIsVisible}
+                    />
+                )}
+                <View style={styles.goalsContainer}>
+                    <FlatList
+                        data={goals}
+                        keyExtractor={(item, index) => item.key}
+                        renderItem={(itemData) => {
+                            return (
+                                <GoalItem
+                                    deleteItem={deleteItems}
+                                    text={itemData.item.text}
+                                    itemKey={itemData.item.key}
+                                />
+                            );
+                        }}
+                    />
+                </View>
             </View>
-        </View>
+        </>
     );
 }
 
@@ -42,6 +57,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 50,
         paddingHorizontal: 16,
+        backgroundColor: 'teal',
     },
     goalsContainer: {
         flex: 6,
